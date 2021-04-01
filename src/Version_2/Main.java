@@ -14,15 +14,16 @@ public class Main {
         Race race = new Race(new Road(60),
                 new Tunnel(),
                 new Road(40));
-        waitingForCars(race);
-    }
-
-
-    private static void waitingForCars(Race race)
-    {
         Car[] cars = new Car[CARS_COUNT];
         ExecutorService executorService = Executors.newFixedThreadPool(CARS_COUNT);
+        waitingForCars(race, cars, executorService);
+        beginRace(cars, executorService);
+        System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
+        executorService.shutdown();
+    }
 
+    private static void waitingForCars(Race race, Car[] cars, ExecutorService executorService)
+    {
         Callable<Integer> preparation = new Callable<Integer>() {
             @Override
             public Integer call() throws Exception
@@ -33,18 +34,18 @@ public class Main {
                 return 1;
             }
         };
-
         Future<Integer> futurePreparation = executorService.submit(preparation);
         try {
-            if (futurePreparation.get() == 1) {
-                System.out.println(" Не все участники подготовились. Гонка отложена.");
-                return;
-            }
+            futurePreparation.get();
+            System.out.println("Все участники подготовились.");
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+    }
+    private static void beginRace(Car[] cars, ExecutorService executorService)
+    {
         System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка началась!!!");
         Callable<Integer> overcomingObstacles = new Callable<Integer>() {
             @Override
@@ -58,16 +59,14 @@ public class Main {
         };
         Future<Integer> futureOvercomingObstacles = executorService.submit(overcomingObstacles);
         try {
-            if (futureOvercomingObstacles.get() == 1) {
-                System.out.println("не все участники дошли до финиша");
-            }
+            futureOvercomingObstacles.get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
     }
+
 }
 
 

@@ -36,10 +36,8 @@ public class Main {
 
         Future<Integer> futurePreparation = executorService.submit(preparation);
         try {
-            if (futurePreparation.get() == 1) {
-                System.out.println(" Не все участники подготовились. Гонка отложена.");
-                return;
-            }
+            futurePreparation.get();
+            System.out.println("Все участники подготовились.");
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -58,15 +56,14 @@ public class Main {
         };
         Future<Integer> futureOvercomingObstacles = executorService.submit(overcomingObstacles);
         try {
-            if (futureOvercomingObstacles.get() == 1) {
-                System.out.println("не все участники дошли до финиша");
-            }
+            futureOvercomingObstacles.get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
         System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
+        executorService.shutdown();
     }
 }
 
